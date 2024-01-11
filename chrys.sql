@@ -33,7 +33,7 @@ CREATE TABLE appl_eval(
 
 DELIMITER //
 
-CREATE TRIGGER max3
+CREATE TRIGGER max3apps
 BEFORE INSERT ON promotion_appl FOR EACH ROW
 BEGIN
     DECLARE active_requests INT;
@@ -143,6 +143,33 @@ BEGIN
     ELSE
         SET evaluation_grade_param = (eval1_grade + eval2_grade) / 2;
     END IF;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE generate_job_report(
+    IN job_id_param INT
+)
+BEGIN
+    DECLARE winner_username VARCHAR(30);
+
+    SELECT employee_username
+    INTO winner_username
+    FROM (
+        SELECT employee_username,
+               AVG(evaluator_grade) AS avg_grade
+        FROM job
+        WHERE id = job_id_param
+              AND status = 'completed'
+        GROUP BY employee_username
+        ORDER BY avg_grade DESC
+        LIMIT 1
+    ) AS result;
+    
+    SELECT winner_username AS job_winner;
 END;
 //
 
