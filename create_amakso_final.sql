@@ -1,3 +1,7 @@
+drop database eval;
+create database eval;
+use eval;
+
 CREATE TABLE IF NOT EXISTS `applies` (
   `cand_usrname` varchar(30) NOT NULL DEFAULT 'unknown',
   `job_id` int(11) NOT NULL
