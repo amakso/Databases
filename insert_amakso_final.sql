@@ -107,4 +107,4 @@ INSERT INTO `requires` (`job_id`, `subject_title`) VALUES
 
 
 
-CALL Randomtimesistor();
+ /*CALL Randomtimesistor();
