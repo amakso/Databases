@@ -1,6 +1,6 @@
 CREATE TABLE promotion_appl(
 	appl_id INT(11) NOT NULL AUTO_INCREMENT,
-    status ENUM('active','finished','rejected'),
+    status ENUM('active','completed','rejected'),
     appl_date DATE NOT NULL,
     cancel_date DATE NOT NULL,
     job_id INT(11) NOT NULL,
@@ -19,14 +19,14 @@ CREATE TABLE appl_eval(
 	grade1 TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
     grade2 TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
     job_id INT(11) NOT NULL,
-    state ENUM('active','finished'),
+    ev_status ENUM('active','completed'),
     PRIMARY KEY(id),
     CONSTRAINT EVLNAMEE FOREIGN KEY (evaluator1) REFERENCES evaluator(username) 
-	ON UPDATE CASCADE ON DELETE CASCADE
+	ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT EVLNAMEEE FOREIGN KEY (evaluator2) REFERENCES evaluator(username) 
-	ON UPDATE CASCADE ON DELETE CASCADE
+	ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT JIDDD FOREIGN KEY (job_id) REFERENCES job(id) 
-	ON UPDATE CASCADE ON DELETE CASCADE
+	ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT EVID FOREIGN KEY (id) REFERENCES promotion_appl(appl_id) 
 	ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -65,7 +65,7 @@ DELIMITER ;
 DELIMITER //
 
 CREATE TRIGGER max15DaysBeforeStart
-BEFORE INSERT ON applies FOR EACH ROW
+BEFORE INSERT ON promotion_appl FOR EACH ROW
 BEGIN
     DECLARE days_before_start INT;
 
