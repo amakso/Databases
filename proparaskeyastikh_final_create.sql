@@ -72,7 +72,7 @@ CREATE TABLE applies(
 CREATE TABLE subject(
 	title VARCHAR(36) DEFAULT 'unknown' NOT NULL,
     descr TINYTEXT,
-    belongs_to VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+    belongs_to VARCHAR(36) DEFAULT 'unknown',
     PRIMARY KEY(title),
 	CONSTRAINT TITLEBT FOREIGN KEY (belongs_to) REFERENCES subject(title) 
 	ON UPDATE CASCADE ON DELETE CASCADE
@@ -308,7 +308,6 @@ END;
 
 DELIMITER ;
 
-SET FOREIGN_KEY_CHECKS = 0;
 ALTER TABLE has_degree ADD FOREIGN KEY (cand_usrname) REFERENCES employee(username);
 
 
