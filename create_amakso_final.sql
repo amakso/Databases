@@ -42,11 +42,14 @@ CREATE TABLE job(
     salary FLOAT NOT NULL,
     position VARCHAR(60) DEFAULT 'unknown' NOT NULL,
     edra VARCHAR(60) DEFAULT 'unknown' NOT NULL,
-    evaluator VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+    evaluator1 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+	evaluator2 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
     announce_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     submission_date DATE NOT NULL,
     PRIMARY KEY(id),
-    CONSTRAINT EVLNAME FOREIGN KEY (evaluator) REFERENCES evaluator(username) 
+    CONSTRAINT EVLNAME FOREIGN KEY (evaluator1) REFERENCES evaluator(username) 
+	ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT EVLSNAME FOREIGN KEY (evaluator2) REFERENCES evaluator(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
     
@@ -63,6 +66,7 @@ CREATE TABLE employee(
 CREATE TABLE applies(
 	cand_usrname VARCHAR(30) DEFAULT 'unknown' NOT NULL,
     job_id INT(11) NOT NULL,
+    status ENUM('active','inactive') DEFAULT 'active',
     PRIMARY KEY(cand_usrname, job_id),
     CONSTRAINT EUNAMEEEE FOREIGN KEY (cand_usrname) REFERENCES employee(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE,
@@ -150,7 +154,6 @@ CREATE TABLE logs (
     username VARCHAR(30) NOT NULL,
     action VARCHAR(50) NOT NULL,
     date_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP()
-
 ) ENGINE=InnoDB;
 
 CREATE TABLE DBA (

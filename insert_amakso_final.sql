@@ -1,4 +1,3 @@
-
 INSERT INTO user VALUES 
 ('messi10', 'password1', 'Lionel', 'Messi', '2016-04-23 12:30:00', 'lionel.messi@gmail.com'),
 ('ronaldo7', 'password2', 'Cristiano', 'Ronaldo', '2015-08-15 15:45:00', 'cristiano.ronaldo@gmail.com'),
@@ -48,23 +47,22 @@ INSERT INTO evaluator VALUES
 ('panos100', 3, '734251759');
 
 INSERT INTO job VALUES 
-(NULL, '2016-03-15', 35000, 'Head Coach', 'Amerikhs 23, Patras, Greece', 'messi10', '2016-03-01 08:00:00', '2016-04-01'),
-(NULL, '2017-08-22', 25000, 'Physiotherapist', 'Mezonos 45, Patras, Greece', 'ronaldo7', '2017-08-15 10:30:00', '2017-09-15'),
-(NULL, '2019-05-10', 30000, 'Marketing Manager', 'Agiou Nikolaou 12, Patras, Greece', 'neymarjr11', '2019-05-01 12:15:00', '2019-06-01'),
-(NULL, '2016-11-28', 38000, 'Head of Scouting', 'Amerikhs 23, Patras, Greece', 'modric10', '2016-11-15 14:45:00', '2016-12-15'),
-(NULL, '2018-06-05', 32000, 'Team Psychologist', 'Mezonos 45, Patras, Greece', 'salah11', '2018-05-30 17:30:00', '2018-07-01'),
-(NULL, '2015-10-19', 27000, 'Scout', 'Agiou Nikolaou 12, Patras, Greece', 'kane9', '2015-10-01 20:00:00', '2015-11-01'),
-(NULL, '2020-02-15', 20000, 'Fitness Coach', 'Amerikhs 23, Patras, Greece', 'messi10', '2020-02-01 09:30:00', '2020-03-01'),
-(NULL, '2017-12-08', 30000, 'Sports Analyst', 'Mezonos 45, Patras, Greece', 'ronaldo7', '2017-11-30 11:15:00', '2018-01-01'),
-(NULL, '2023-01-13', 9000, 'patty flipper', 'Brazilias 47', 'katerinakixx', '2022-12-13 10:30:00', '2023-02-13'),
-(NULL, '2023-01-08', 9000, 'cashier', 'Ermou 1', 'faker', '2022-12-08 08:00:00', '2023-02-08'),
-(NULL, '2020-01-08', 9500, 'lantza', 'Porou 69', 'antwnakious', '2019-12-08 18:32:01', '2020-02-08'),
-(NULL, '2014-12-01', 9700, 'mageiras', 'Ermou 1', 'ab', '2014-11-01 19:22:11', '2015-01-01'),
-(NULL, '2023-01-10', 8100, 'lantza', 'Brazilias 47', 'panos100', '2022-12-10 21:09:56', '2023-02-10'),
-(NULL, '2023-01-12', 9000, 'psistis', 'Porou 69', 'elenoula13', '2022-12-12 03:11:11', '2023-02-12'),
-(NULL, '2021-01-08', 12000, 'manager', 'Brazilias 47', 'katerinakixx', '2020-12-08 09:32:09', '2021-02-08'),
-(NULL, '2019-09-21', 12000, 'manager', 'Porou 69', 'elenoula13', '2019-08-21 08:59:58', '2019-10-21');
-
+(NULL, '2016-03-15', 35000, 'Head Coach', 'Amerikhs 23, Patras, Greece', 'messi10','faker' ,'2016-03-01 08:00:00', '2016-04-01'),
+(NULL, '2017-08-22', 25000, 'Physiotherapist', 'Mezonos 45, Patras, Greece', 'ronaldo7','katerinakixx', '2017-08-15 10:30:00', '2017-09-15'),
+(NULL, '2019-05-10', 30000, 'Marketing Manager', 'Agiou Nikolaou 12, Patras, Greece', 'elenoula13','neymarjr11', '2019-05-01 12:15:00', '2019-06-01'),
+(NULL, '2016-11-28', 38000, 'Head of Scouting', 'Amerikhs 23, Patras, Greece', 'modric10', 'elenoula13','2016-11-15 14:45:00', '2016-12-15'),
+(NULL, '2018-06-05', 32000, 'Team Psychologist', 'Mezonos 45, Patras, Greece', 'salah11', 'kane9','2018-05-30 17:30:00', '2018-07-01'),
+(NULL, '2015-10-19', 27000, 'Scout', 'Agiou Nikolaou 12, Patras, Greece', 'kane9', 'ronaldo7','2015-10-01 20:00:00', '2015-11-01'),
+(NULL, '2020-02-15', 20000, 'Fitness Coach', 'Amerikhs 23, Patras, Greece', 'messi10', 'antwnakious','2020-02-01 09:30:00', '2020-03-01'),
+(NULL, '2017-12-08', 30000, 'Sports Analyst', 'Mezonos 45, Patras, Greece', 'ronaldo7','faker' ,'2017-11-30 11:15:00', '2018-01-01'),
+(NULL, '2023-01-13', 9000, 'patty flipper', 'Brazilias 47', 'katerinakixx', 'faker','2022-12-13 10:30:00', '2023-02-13'),
+(NULL, '2023-01-08', 9000, 'cashier', 'Ermou 1', 'faker', 'panos100','2022-12-08 08:00:00', '2023-02-08'),
+(NULL, '2020-01-08', 9500, 'lantza', 'Porou 69', 'antwnakious','messi10' ,'2019-12-08 18:32:01', '2020-02-08'),
+(NULL, '2014-12-01', 9700, 'mageiras', 'Ermou 1', 'ab','salah11','2014-11-01 19:22:11', '2015-01-01'),
+(NULL, '2023-01-10', 8100, 'lantza', 'Brazilias 47', 'panos100', 'katerinakixx','2022-12-10 21:09:56', '2023-02-10'),
+(NULL, '2023-01-12', 9000, 'psistis', 'Porou 69', 'elenoula13','faker' ,'2022-12-12 03:11:11', '2023-02-12'),
+(NULL, '2021-01-08', 12000, 'manager', 'Brazilias 47', 'katerinakixx','kane9' ,'2020-12-08 09:32:09', '2021-02-08'),
+(NULL, '2019-09-21', 12000, 'manager', 'Porou 69', 'elenoula13','panos100' ,'2019-08-21 08:59:58', '2019-10-21');
 
 INSERT INTO employee VALUES 
 ('mbappe7', 'Young and talented forward with speed and technical skills. World Cup winner with France.', 'L.o.R from Didier Deschamps.', 'UEFA Pro License'),
@@ -81,18 +79,18 @@ INSERT INTO employee VALUES
 ('xaralampos23', '10 xronia proiphresia', 'none', 'none');
 
 INSERT INTO applies VALUES 
-('mbappe7', 1), 
-('kroos8', 2),
-('debruyne17', 3), 
-('lewandowski9', 4),  
-('hazard10', 5), 
-('pogba6', 6),
-('evangelia10', 1),
-('giannakis123', 2),
-('giorgos12', 3),
-('marios21', 4),
-('mhtsos69', 5),
-('xaralampos23', 6);
+('mbappe7', 1, 'active'), 
+('kroos8', 2,'active'),
+('debruyne17', 3,'active'), 
+('lewandowski9', 4,'active'),  
+('hazard10', 5,'active'), 
+('pogba6', 6,'active'),
+('evangelia10', 1,'active'),
+('giannakis123', 2,'active'),
+('giorgos12', 3,'active'),
+('marios21', 4,'active'),
+('mhtsos69', 5,'active'),
+('xaralampos23', 6,'active');
 
 INSERT INTO degree VALUES 
 ('Computer Science Bachelor', 'Stanford University', 'BSc'),
@@ -117,6 +115,7 @@ INSERT INTO has_degree VALUES
 ('Computer Game Progamming Bachelor', 'Lulea University', 'evangelia10', '2010', 9.8),
 ('Computer Science Bachelor', 'Uppsala University', 'mhtsos69', '2001', 9.7),
 ('Graphic Design Bachelor', 'Jonkoping University', 'giannakis123', '2012', 8);
+
 INSERT INTO languages VALUES 
 ('mbappe7', 'FR,EN'),  
 ('kroos8', 'GE,EN'),
@@ -126,6 +125,7 @@ INSERT INTO languages VALUES
 ('marios21', 'EN,GR'),
 ('mhtsos69', 'EN,GR'),
 ('xaralampos23', 'EN,GR');
+
 INSERT INTO project VALUES 
 ('mbappe7', 1, 'Injury Prevention Course', 'https://www.iman.com/injury_prevention'),
 ('kroos8', 2, 'Marketing Campaign', 'https://www.iman.com/marketing_campaign'),
@@ -178,4 +178,4 @@ INSERT INTO requires VALUES
 (7, 'management'),
 (8, 'Serving');
 	
-CALL Randomtimesistor();
+/*CALL rand_times();

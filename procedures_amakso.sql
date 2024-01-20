@@ -2,12 +2,12 @@ use eval;
 
 DELIMITER //
 
-CREATE PROCEDURE Randomtimesistor()
+CREATE PROCEDURE rand_times()
 BEGIN
   DECLARE i INT DEFAULT 1;
   
   loop_insert: LOOP
-    IF i > 60000 THEN
+    IF i > 600 THEN
       LEAVE loop_insert;
     END IF;
     
@@ -28,51 +28,66 @@ END //
 DELIMITER ;
 
 DELIMITER //
-
-CREATE PROCEDURE ProcessApplication(
-    IN employee_username VARCHAR(30),
+CREATE PROCEDURE proccessapp(
+    IN emp_username VARCHAR(30),
     IN job_id INT,
-    IN action_char CHAR(1)
+    IN action CHAR(1)
 )
 BEGIN
-    DECLARE evaluator1 VARCHAR(30);
-    DECLARE evaluator2 VARCHAR(30);
+    DECLARE eval1 VARCHAR(30);
+    DECLARE eval2 VARCHAR(30);
 
-    -- Βρίσκουμε τους αξιολογητές για τη συγκεκριμένη θέση
+    -- Get evaluators for the job from the same company
     SELECT e1.username, e2.username
-    INTO evaluator1, evaluator2
-    FROM job j
-    INNER JOIN evaluator e1 ON j.evaluator = e1.username
-    INNER JOIN evaluator e2 ON j.evaluator <> e1.username AND j.evaluator = e2.username
-    WHERE j.id = job_id;
+    INTO eval1, eval2
+    FROM evaluator e1, evaluator e2, job j, etaireia et
+    WHERE j.id = job_id
+        AND j.evaluator = e1.username
+        AND e1.firm = et.AFM
+        AND e2.firm = et.AFM
+        AND e2.username != e1.username;
 
-    IF action_char = 'i' THEN
-        -- Δημιουργούμε την αίτηση, ελέγχοντας αν έχουν συμπληρωθεί οι αξιολογητές
-        INSERT INTO applies (cand_usrname, job_id)
-        VALUES (employee_username, job_id);
+    IF action = 'i' THEN
+        -- Insert application
+        INSERT INTO applies(cand_usrname, job_id)
+        VALUES (emp_username, job_id);
 
-        UPDATE job
-        SET evaluator = CASE WHEN evaluator1 IS NULL THEN NULL ELSE evaluator1 END
-        WHERE id = job_id;
+        -- Check if evaluators are missing and assign from the same company
+        INSERT IGNORE INTO appl_eval(evaluator1, evaluator2, job_id, ev_status)
+        VALUES (eval1, eval2, job_id, 'active');
+        
+        SELECT COUNT(*) INTO @count
+        FROM applies
+        WHERE cand_usrname = emp_username AND job_id = job_id;
+        
+        IF @count > 0 THEN
+            SELECT 'Application submitted successfully.' AS result;
+        ELSE
+            SELECT 'Error submitting application.' AS result;
+        END IF;
 
-        UPDATE job
-        SET evaluator = CASE WHEN evaluator2 IS NULL THEN NULL ELSE evaluator2 END
-        WHERE id = job_id;
-
-    ELSEIF action_char = 'c' THEN
-        -- Ακύρωση αίτησης, αν υπάρχει
+    ELSEIF action = 'c' THEN
+        -- Cancel application
         DELETE FROM applies
-        WHERE cand_usrname = employee_username AND job_id = job_id;
+        WHERE cand_usrname = emp_username AND job_id = job_id;
 
-    ELSEIF action_char = 'a' THEN
-        -- Ενεργοποίηση ακυρωμένης αίτησης, αν υπάρχει
-        UPDATE applies
-        SET active = 1
-        WHERE cand_usrname = employee_username AND job_id = job_id;
+        SELECT 'Application canceled successfully.' AS result;
+        
+    ELSEIF action = 'a' THEN
+        -- Activate canceled application
+        UPDATE appl_eval
+        SET ev_status = 'active'
+        WHERE job_id = job_id
+            AND evaluator1 = eval1
+            AND evaluator2 = eval2;
 
+        SELECT 'Application activated successfully.' AS result;
+
+    ELSE
+        SELECT 'Invalid action.' AS result;
+        
     END IF;
 END //
-
 DELIMITER ;
 
 DELIMITER //
@@ -85,6 +100,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 DELIMITER //
 
 CREATE PROCEDURE byeval(IN evaluator_username VARCHAR(30))
@@ -108,24 +124,20 @@ CREATE PROCEDURE check_evaluation(
 BEGIN
     DECLARE eval1_grade FLOAT;
     DECLARE eval2_grade FLOAT;
-
-    -- Get the grade from the first evaluator
+    
     SELECT grade INTO eval1_grade
     FROM appl_eval
     WHERE evaluator1 = evaluator_username_param
         AND emp_username = employee_username_param
         AND job_id = job_id_param;
-
-    -- Get the grade from the second evaluator
+    
     SELECT grade INTO eval2_grade
     FROM appl_eval
     WHERE evaluator2 = evaluator_username_param
         AND emp_username = employee_username_param
         AND job_id = job_id_param;
 
-    -- Calculate the evaluation grade
     IF eval1_grade IS NULL THEN
-        -- If the first evaluator hasn't provided a grade
         SET evaluation_grade_param = (
             IFNULL(
                 (SUM(
@@ -140,7 +152,6 @@ BEGIN
             ) + eval2_grade
         ) / 2;
     ELSEIF eval2_grade IS NULL THEN
-        -- If the second evaluator hasn't provided a grade
         SET evaluation_grade_param = (eval1_grade +
             IFNULL(
                 (SUM(
@@ -155,7 +166,6 @@ BEGIN
             )
         ) / 2;
     ELSE
-        -- If both evaluators have provided grades
         SET evaluation_grade_param = (eval1_grade + eval2_grade) / 2;
     END IF;
 END;

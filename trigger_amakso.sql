@@ -127,10 +127,8 @@ BEFORE INSERT ON promotion_appl FOR EACH ROW
 BEGIN
     DECLARE days_before_start INT;
 
-    -- Calculate the days before the job starts
     SET days_before_start = DATEDIFF((SELECT start_date FROM job WHERE id = NEW.job_id), NEW.appl_date);
 
-    -- Check if the application is within the allowed timeframe
     IF days_before_start < 0 OR days_before_start > 15 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Μη επιτρεπτή η υποβολή αίτησης εκτός του επιτρεπτού χρονικού πλαισίου';
     END IF;
