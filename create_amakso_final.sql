@@ -42,11 +42,14 @@ CREATE TABLE job(
     salary FLOAT NOT NULL,
     position VARCHAR(60) DEFAULT 'unknown' NOT NULL,
     edra VARCHAR(60) DEFAULT 'unknown' NOT NULL,
-    evaluator VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+    evaluator1 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+	evaluator2 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
     announce_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     submission_date DATE NOT NULL,
     PRIMARY KEY(id),
-    CONSTRAINT EVLNAME FOREIGN KEY (evaluator) REFERENCES evaluator(username) 
+    CONSTRAINT EVLNAME FOREIGN KEY (evaluator1) REFERENCES evaluator(username) 
+	ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT EVLSNAME FOREIGN KEY (evaluator2) REFERENCES evaluator(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
     
@@ -63,6 +66,7 @@ CREATE TABLE employee(
 CREATE TABLE applies(
 	cand_usrname VARCHAR(30) DEFAULT 'unknown' NOT NULL,
     job_id INT(11) NOT NULL,
+    status ENUM('active','inactive') DEFAULT 'active',
     PRIMARY KEY(cand_usrname, job_id),
     CONSTRAINT EUNAMEEEE FOREIGN KEY (cand_usrname) REFERENCES employee(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE,
@@ -145,14 +149,55 @@ CONSTRAINT idait FOREIGN KEY (id_job) REFERENCES job(id)
 ON UPDATE CASCADE ON DELETE CASCADE
 )ENGINE=InnoDB;
 
+CREATE TABLE logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(30) NOT NULL,
+    action VARCHAR(50) NOT NULL,
+    date_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP()
+) ENGINE=InnoDB;
+
 CREATE TABLE DBA (
 username VARCHAR(30) DEFAULT 'unknown' NOT NULL,
 start_date DATE NOT NULL,
 end_date DATE,
-entry_log VARCHAR(30) NOT NULL,
+entry_log INT NOT NULL,
 PRIMARY KEY(username),
 CONSTRAINT dbauser FOREIGN KEY(username) REFERENCES user(username)
 ON UPDATE CASCADE ON DELETE CASCADE,
-CONSTRAINT logdba FOREIGN KEY(entry_log) REFERENCES log(id)
+CONSTRAINT logdba FOREIGN KEY(entry_log) REFERENCES logs(id)
 ON UPDATE CASCADE ON DELETE CASCADE
 )ENGINE=InnoDB;
+
+CREATE TABLE promotion_appl(
+	appl_id INT(11) NOT NULL AUTO_INCREMENT,
+    status ENUM('active','completed','rejected'),
+    appl_date DATE NOT NULL,
+    cancel_date DATE NOT NULL,
+    job_id INT(11) NOT NULL,
+    emp_username VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+    PRIMARY KEY(appl_id),
+    CONSTRAINT EMPNAME FOREIGN KEY (emp_username) REFERENCES employee(username) 
+	ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT JIDDDD FOREIGN KEY (job_id) REFERENCES job(id) 
+	ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE appl_eval(
+	id INT(11) NOT NULL AUTO_INCREMENT,
+    evaluator1 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+    evaluator2 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+	grade1 TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
+    grade2 TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
+    job_id INT(11) NOT NULL,
+    ev_status ENUM('active','completed'),
+    PRIMARY KEY(id),
+    CONSTRAINT EVLNAMEE FOREIGN KEY (evaluator1) REFERENCES evaluator(username) 
+	ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT EVLNAMEEE FOREIGN KEY (evaluator2) REFERENCES evaluator(username) 
+	ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT JIDDD FOREIGN KEY (job_id) REFERENCES job(id) 
+	ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT EVID FOREIGN KEY (id) REFERENCES promotion_appl(appl_id) 
+	ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
