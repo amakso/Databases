@@ -178,4 +178,4 @@ INSERT INTO requires VALUES
 (7, 'management'),
 (8, 'Serving');
 	
-/*CALL rand_times();
+CALL rand_times();

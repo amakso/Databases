@@ -1,5 +1,8 @@
 use eval;
 
+CREATE INDEX INDX_bathmos ON istor_aitiseis(bathmos);
+CREATE INDEX INDX_byeval ON istor_aitiseis(usereval1, usereval2);
+
 DELIMITER //
 
 CREATE PROCEDURE rand_times()
@@ -7,7 +10,7 @@ BEGIN
   DECLARE i INT DEFAULT 1;
   
   loop_insert: LOOP
-    IF i > 600 THEN
+    IF i > 6000 THEN
       LEAVE loop_insert;
     END IF;
     
@@ -37,55 +40,45 @@ BEGIN
     DECLARE eval1 VARCHAR(30);
     DECLARE eval2 VARCHAR(30);
 
-    -- Get evaluators for the job from the same company
-    SELECT e1.username, e2.username
-    INTO eval1, eval2
-    FROM evaluator e1, evaluator e2, job j, etaireia et
-    WHERE j.id = job_id
-        AND j.evaluator = e1.username
-        AND e1.firm = et.AFM
-        AND e2.firm = et.AFM
-        AND e2.username != e1.username;
+    SELECT username
+    INTO eval1
+    FROM evaluator
+    order by rand()
+    limit 1;
+    
+    select username into eval2 from evaluator where username <> eval1 order by rand() limit 1;
 
     IF action = 'i' THEN
-        -- Insert application
-        INSERT INTO applies(cand_usrname, job_id)
-        VALUES (emp_username, job_id);
-
-        -- Check if evaluators are missing and assign from the same company
-        INSERT IGNORE INTO appl_eval(evaluator1, evaluator2, job_id, ev_status)
-        VALUES (eval1, eval2, job_id, 'active');
         
-        SELECT COUNT(*) INTO @count
-        FROM applies
-        WHERE cand_usrname = emp_username AND job_id = job_id;
+        INSERT INTO applies(cand_usrname, job_id, status)
+        VALUES (emp_username, job_id, 'active');
         
-        IF @count > 0 THEN
+        IF EXISTS(SELECT 1 FROM applies WHERE cand_usrname = emp_username AND job_id = job_id) THEN
             SELECT 'Application submitted successfully.' AS result;
         ELSE
             SELECT 'Error submitting application.' AS result;
         END IF;
 
     ELSEIF action = 'c' THEN
-        -- Cancel application
-        DELETE FROM applies
-        WHERE cand_usrname = emp_username AND job_id = job_id;
-
-        SELECT 'Application canceled successfully.' AS result;
+        
+        IF EXISTS (SELECT 1 FROM applies WHERE cand_usrname = emp_username AND job_id = job_id AND status = 'active') THEN
+            UPDATE applies
+            SET status = 'inactive'
+            WHERE cand_usrname = emp_username AND applies.job_id = job_id;
+            SELECT 'Job application canceled successfully.' AS message;
+        ELSE
+            SELECT 'Error: No active application found for the specified employee and job.' AS message;
+        END IF;
         
     ELSEIF action = 'a' THEN
-        -- Activate canceled application
-        UPDATE appl_eval
-        SET ev_status = 'active'
-        WHERE job_id = job_id
-            AND evaluator1 = eval1
-            AND evaluator2 = eval2;
-
-        SELECT 'Application activated successfully.' AS result;
-
-    ELSE
-        SELECT 'Invalid action.' AS result;
-        
+		IF EXISTS (SELECT 1 FROM applies WHERE cand_usrname = emp_username AND job_id = job_id AND status = 'inactive') THEN
+            UPDATE applies
+            SET status = 'active'
+            WHERE cand_usrname = emp_username AND applies.job_id = job_id;
+            SELECT 'Job application activated successfully.' AS message;
+        ELSE
+            SELECT 'Error: No inactive application found for the specified employee and job.' AS message;
+        END IF;
     END IF;
 END //
 DELIMITER ;
@@ -94,8 +87,18 @@ DELIMITER //
 
 CREATE PROCEDURE gradeapp(IN min INT, IN max INT)
 BEGIN
-    SELECT employ, id_job
+    SELECT employ, id_job, bathmos
     FROM istor_aitiseis
+    WHERE bathmos BETWEEN min AND max;
+END //
+
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE gradeappind(IN min INT, IN max INT)
+BEGIN
+    SELECT employ, id_job, bathmos
+    FROM istor_aitiseis use index(INDX_bathmos)
     WHERE bathmos BETWEEN min AND max;
 END //
 
@@ -111,8 +114,15 @@ BEGIN
 END //
 
 DELIMITER ;
+delimiter // 
+CREATE PROCEDURE byevalind(IN evaluator_username VARCHAR(30))
+BEGIN
+    SELECT employ, id_job
+    FROM istor_aitiseis use index(INDX_byeval)
+    WHERE usereval1 = evaluator_username OR usereval2 = evaluator_username;
+END //
 
-
+DELIMITER ;
 DELIMITER //
 
 CREATE PROCEDURE check_evaluation(
