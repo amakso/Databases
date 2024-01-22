@@ -184,18 +184,20 @@ INSERT INTO requires VALUES
 (8, 'Serving');
 
 INSERT INTO promotion_appl VALUES
-(NULL, 'active', '2022-12-05', NULL, 9, 'mbappe7'),
+(NULL, 'active', '2017-10-20', NULL, 8, 'mbappe7'),
 (NULL, 'active', '2017-06-15', NULL, 2, 'evangelia10'),
 (NULL, 'active', '2016-08-27', NULL, 4, 'debruyne17'),
 (NULL, 'active', '2016-07-07', NULL, 4, 'giannakis123'),
-(NULL, 'active', '2020-01-10', NULL, 7, 'lewandowski9'),
+(NULL, 'active', '2022-12-27', NULL, 9, 'lewandowski9'),
 (NULL, 'active', '2016-05-01', NULL, 4, 'mhtsos69'),
 (NULL, 'active', '2017-04-11', NULL, 2, 'hazard10'),
 (NULL, 'active', '2016-08-03', NULL, 4, 'giorgos12'),
-(NULL, 'active', '2019-02-19', NULL, 3, 'xaralampos23'),
+(NULL, 'active', '2019-02-19', NULL, 7, 'xaralampos23'),
 (NULL, 'active', '2015-12-30', NULL, 1, 'kroos8'),
 (NULL, 'active', '2022-12-26', NULL, 9, 'pogba6'),
 (NULL, 'active', '2017-08-05', NULL, 2, 'marios21'),
+(NULL, 'active', '2014-09-25', NULL, 12, 'marios21'),
+(NULL, 'active', '2018-02-11', NULL, 5, 'marios21'),
 (NULL, 'canceled', '2012-11-05', '2012-12-10', 2, 'marios21'),
 (NULL, 'canceled', '2013-12-09', '2014-01-08', 5, 'debruyne17'),
 (NULL, 'canceled', '2014-07-18', '2014-12-05', 6, 'mhtsos69'),
@@ -204,22 +206,27 @@ INSERT INTO promotion_appl VALUES
 (NULL, 'canceled', '2016-04-30', '2016-09-14', 10, 'mbappe7');
 	
 INSERT INTO appl_eval VALUES
-(NULL, 'kane9', NULL, 18, NULL, 9, 'active', 'mbappe7'),
+(NULL, 'kane9', NULL, 17, NULL, 8, 'active', 'mbappe7'),
 (NULL, 'messi10', 'ronaldo7', 8, 10, 2, 'active', 'evangelia10'),
 (NULL, 'neymarjr11', NULL, 8, NULL, 4, 'active', 'debruyne17'),
 (NULL, 'salah11', 'neymarjr11', 7, 6, 4, 'active', 'giannakis123'),
-(NULL, 'ab', 'modric10', 14, 13, 7, 'active', 'lewandowski9'),
+(NULL, 'ab', 'modric10', 14, 14, 9, 'active', 'lewandowski9'),
 (NULL, NULL, NULL, NULL, NULL, 4, 'active', 'mhtsos69'),
 (NULL, NULL, 'faker', NULL, 16, 2, 'active', 'hazard10'),
 (NULL, 'panos100', 'katerinakixx', 8, 8, 4, 'active', 'giorgos12'),
-(NULL, NULL, 'faker', NULL, 11, 3, 'active', 'xaralampos23'),
+(NULL, NULL, 'faker', NULL, 13, 7, 'active', 'xaralampos23'),
 (NULL, 'ab', 'antwnakious', 15, 11, 1, 'active', 'kroos8'),
-(NULL, 'elenoula13', 'messi10', 19, 18, 9, 'active', 'pogba6'),
+(NULL, 'elenoula13', 'messi10', 10, 18, 9, 'active', 'pogba6'),
 (NULL, NULL, NULL, NULL, NULL, 2, 'active', 'marios21');
 
 /*CALL check_evaluation('salah11', 'mbappe7', 9, @evaluation_grade_param, @has_evaluation_flag);
-
 SELECT @evaluation_grade_param AS evaluation_grade, @has_evaluation_flag AS has_evaluation;*/
 
-CALL gcurs(12, @max_evaluation_username_p, @max_evaluation_score_p);
-SELECT @max_evaluation_username_p, @max_evaluation_score_p;
+/*CALL gcurs(9, @max_evaluation_username_p, @max_evaluation_score_p);
+SELECT @max_evaluation_username_p, @max_evaluation_score_p;*/
+
+/*UPDATE promotion_appl
+SET status = 'canceled', cancel_date = '2018-05-03'
+WHERE appl_id = 14 AND job_id = 5;
+
+SELECT * FROM promotion_appl WHERE appl_id = 14 AND job_id = 5;*/

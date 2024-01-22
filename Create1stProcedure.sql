@@ -172,7 +172,7 @@ BEGIN
     FROM promotion_appl
     WHERE emp_username = NEW.emp_username AND status = 'active';
 
-    IF active_requests >= 3 THEN
+    IF active_requests > 3 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ο εργαζόμενος έχει ήδη τρεις ενεργές αιτήσεις';
     END IF;
 END;
@@ -181,22 +181,20 @@ END;
 DELIMITER ;
 
 DELIMITER //
-
 CREATE TRIGGER max10interval
 BEFORE UPDATE ON promotion_appl FOR EACH ROW
 BEGIN
-    DECLARE start_date DATE;
+    DECLARE sd DATE;
     
-    SELECT start_date INTO start_date
+    SELECT start_date INTO sd
     FROM job
-    WHERE id = NEW.job_id;
-
-    IF NEW.status = 'canceled' AND start_date <= DATE_ADD(NEW.cancel_date, INTERVAL 10 DAY) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Δεν επιτρέπεται η ακύρωση αίτησης λιγότερο από 10 μέρες πριν την έναρξη της θέσης';
-    END IF;
+    WHERE id = OLD.job_id;
+    
+    IF NEW.status = 'canceled' AND sd - NEW.cancel_date < 10 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Δεν επιτρέπεται η ακύρωση αίτησης λιγότερο από 10 μέρες πριν την έναρξη της θέσης';
+END IF;
 END;
 //
-
 DELIMITER ;
 
 DELIMITER //
@@ -234,11 +232,16 @@ BEGIN
     DECLARE V4 INT;
     DECLARE V5 INT;
 
-    SELECT grade1 INTO eval_grade
-    FROM appl_eval
-    WHERE evaluator1 = evaluator_username_param
-        AND emp_username = employee_username_param
-        AND job_id = job_id_param;
+    SELECT 
+    CASE 
+        WHEN evaluator1 = evaluator_username_param THEN grade1
+        WHEN evaluator2 = evaluator_username_param THEN grade2
+        ELSE NULL 
+    END INTO eval_grade
+	FROM appl_eval
+	WHERE (evaluator1 = evaluator_username_param OR evaluator2 = evaluator_username_param)
+    AND emp_username = employee_username_param
+    AND job_id = job_id_param;
 
     SET has_evaluation_flag = (eval_grade IS NOT NULL);
 
@@ -289,12 +292,16 @@ BEGIN
     DECLARE g1 INT;
     DECLARE g2 INT;
     DECLARE finishedFlag INT;
-    DECLARE employee_username_param VARCHAR(255); -- Add a variable to store the username
-    DECLARE max_evaluation_score FLOAT DEFAULT 0; -- Add a variable to store the max evaluation score
-    DECLARE max_evaluation_username VARCHAR(255); -- Add a variable to store the username with the max score
+    DECLARE employee_username_param VARCHAR(255); 
+    DECLARE max_evaluation_score FLOAT DEFAULT 0; 
+    DECLARE max_evaluation_username VARCHAR(255); 
     
     DECLARE gCursor CURSOR FOR
-        SELECT emp_username, grade1, grade2 FROM appl_eval WHERE job_id = p_job_id;
+        SELECT appl_eval.emp_username, appl_eval.grade1, appl_eval.grade2
+        FROM appl_eval
+        JOIN promotion_appl ON appl_eval.emp_username = promotion_appl.emp_username
+        WHERE appl_eval.job_id = p_job_id
+        ORDER BY promotion_appl.appl_date ASC;
     
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET finishedFlag = 1;
     OPEN gCursor;
@@ -352,3 +359,5 @@ END //
 DELIMITER ;
 
 ALTER TABLE has_degree ADD FOREIGN KEY (cand_usrname) REFERENCES employee(username);
+
+
