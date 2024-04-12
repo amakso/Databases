@@ -66,7 +66,7 @@ ON UPDATE CASCADE ON DELETE CASCADE
 CREATE TABLE applies(
 cand_usrname VARCHAR(30) DEFAULT 'unknown' NOT NULL,
     job_id INT(11) NOT NULL,
-    status ENUM('active','inactive') DEFAULT 'active',
+    status ENUM('active','inactive'),
     PRIMARY KEY(cand_usrname, job_id),
     CONSTRAINT EUNAMEEEE FOREIGN KEY (cand_usrname) REFERENCES employee(username) 
 ON UPDATE CASCADE ON DELETE CASCADE,
@@ -398,26 +398,23 @@ BEGIN
     WHERE cand_usrname = employee_username AND job_id = job_id;
 
     IF action = 'i' THEN
-        IF application_exists = 0 THEN
-            INSERT INTO applies (cand_usrname, job_id)
-            VALUES (employee_username, job_id);
-            
-            IF evaluator1_username = 'unknown' THEN
-                UPDATE job SET evaluator = (SELECT username FROM evaluator WHERE firm = (SELECT firm FROM employee WHERE username = employee_username)) WHERE id = job_id;
-            END IF;
-
-            IF evaluator2_username = 'unknown' THEN
-                UPDATE job SET evaluator1 = (SELECT username FROM evaluator WHERE firm = (SELECT firm FROM employee WHERE username = employee_username)) WHERE id = job_id;
-            END IF;
-
-            SELECT 'successful creation.' AS message;
+		
+        INSERT IGNORE INTO applies
+        VALUES (employee_username, job_id, 'active');
+        
+        SELECT COUNT(*) INTO @count
+        FROM applies
+        WHERE cand_usrname = employee_username AND job_id = job_id;
+        
+        IF @count > 0 THEN
+            SELECT 'Application created or exists' AS result;
         ELSE
-            SELECT 'application exists.' AS message;
+            SELECT 'Error submitting application' AS result;
         END IF;
 
     ELSEIF action = 'c' THEN
         IF application_exists > 0 THEN
-            UPDATE applies SET status = 'inactive' WHERE cand_usrname = employee_username AND job_id = job_id;
+            UPDATE applies SET status = 'inactive' WHERE cand_usrname = employee_username AND job_id = applies.job_id;
             SELECT 'application canceled' AS message;
         ELSE
             SELECT 'no application to cancel' AS message;
@@ -425,7 +422,7 @@ BEGIN
 
     ELSEIF action = 'a' THEN
         IF application_exists > 0 THEN
-            UPDATE applies SET status = 'active' WHERE cand_usrname = employee_username AND job_id = job_id;
+            UPDATE applies SET status = 'active' WHERE cand_usrname = employee_username AND job_id = applies.job_id;
         ELSE
             SELECT 'no canceled application to activate.' AS message;
         END IF;
@@ -663,18 +660,18 @@ INSERT INTO employee VALUES
 ('xaralampos23', '10 xronia proiphresia', 'none', 'none');
  
 INSERT INTO applies VALUES 
-('mbappe7', 1,null), 
-('kroos8', 2,null),
-('debruyne17', 3,null), 
-('lewandowski9', 4,null),  
-('hazard10', 5,null), 
-('pogba6', 6,null),
-('evangelia10', 1,null),
-('giannakis123', 2,null),
-('giorgos12', 3,null),
-('marios21', 4,null),
-('mhtsos69', 5,null),
-('xaralampos23', 6,null);
+('mbappe7', 1, 'active'), 
+('kroos8', 2, 'inactive'),
+('debruyne17', 3, 'active'), 
+('lewandowski9', 4, 'inactive'),
+('hazard10', 5, 'inactive'), 
+('pogba6', 6, 'active'),
+('pogba6', 1, 'active'),
+('giannakis123', 2,'active'),
+('giorgos12', 3, 'inactive'),
+('marios21', 4, 'inactive'),
+('mhtsos69', 5, 'active'),
+('xaralampos23', 6, 'active');
  
 INSERT INTO degree VALUES 
 ('Computer Science Bachelor', 'Stanford University', 'BSc'),
