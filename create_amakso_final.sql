@@ -42,14 +42,14 @@ CREATE TABLE job(
     salary FLOAT NOT NULL,
     position VARCHAR(60) DEFAULT 'unknown' NOT NULL,
     edra VARCHAR(60) DEFAULT 'unknown' NOT NULL,
-    evaluator1 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
-	evaluator2 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+    evaluator VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+	evaluator1 VARCHAR(30) DEFAULT 'unknown',
     announce_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     submission_date DATE NOT NULL,
     PRIMARY KEY(id),
-    CONSTRAINT EVLNAME FOREIGN KEY (evaluator1) REFERENCES evaluator(username) 
+    CONSTRAINT EVLNAME FOREIGN KEY (evaluator) REFERENCES evaluator(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT EVLSNAME FOREIGN KEY (evaluator2) REFERENCES evaluator(username) 
+    CONSTRAINT EVLSNAME FOREIGN KEY (evaluator1) REFERENCES evaluator(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
     
@@ -66,7 +66,7 @@ CREATE TABLE employee(
 CREATE TABLE applies(
 	cand_usrname VARCHAR(30) DEFAULT 'unknown' NOT NULL,
     job_id INT(11) NOT NULL,
-    status ENUM('active','inactive') DEFAULT 'active',
+    statuss ENUM('active','inactive') DEFAULT 'active' not null,
     PRIMARY KEY(cand_usrname, job_id),
     CONSTRAINT EUNAMEEEE FOREIGN KEY (cand_usrname) REFERENCES employee(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE,
@@ -184,12 +184,13 @@ CREATE TABLE promotion_appl(
 
 CREATE TABLE appl_eval(
 	id INT(11) NOT NULL AUTO_INCREMENT,
-    evaluator1 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
-    evaluator2 VARCHAR(30) DEFAULT 'unknown' NOT NULL,
-	grade1 TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
-    grade2 TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL,
+    evaluator1 VARCHAR(30) DEFAULT 'unknown',
+    evaluator2 VARCHAR(30) DEFAULT 'unknown',
+	grade1 TINYINT(4) UNSIGNED DEFAULT '0',
+    grade2 TINYINT(4) UNSIGNED DEFAULT '0',
     job_id INT(11) NOT NULL,
     ev_status ENUM('active','completed'),
+    emp_username VARCHAR(30) DEFAULT 'unknown' NOT NULL,
     PRIMARY KEY(id),
     CONSTRAINT EVLNAMEE FOREIGN KEY (evaluator1) REFERENCES evaluator(username) 
 	ON UPDATE CASCADE ON DELETE CASCADE,
@@ -198,6 +199,9 @@ CREATE TABLE appl_eval(
     CONSTRAINT JIDDD FOREIGN KEY (job_id) REFERENCES job(id) 
 	ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT EVID FOREIGN KEY (id) REFERENCES promotion_appl(appl_id) 
+	ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT EMP FOREIGN KEY (emp_username) REFERENCES promotion_appl(emp_username) 
 	ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+ALTER TABLE has_degree ADD FOREIGN KEY (cand_usrname) REFERENCES employee(username);

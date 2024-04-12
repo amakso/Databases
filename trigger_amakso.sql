@@ -129,7 +129,7 @@ BEGIN
 
     SET days_before_start = DATEDIFF((SELECT start_date FROM job WHERE id = NEW.job_id), NEW.appl_date);
 
-    IF days_before_start < 0 OR days_before_start > 15 THEN
+    IF days_before_start < 15 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Μη επιτρεπτή η υποβολή αίτησης εκτός του επιτρεπτού χρονικού πλαισίου';
     END IF;
 END;
